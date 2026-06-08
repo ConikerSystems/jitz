@@ -72,6 +72,27 @@ main { max-width: 1150px; margin: 0 auto; padding: 28px 24px 80px; }
 .btn-started { background: var(--accent2); color: #1a1d27; }
 .btn-done { background: #4ade80; color: #14241a; }
 
+/* Star ratings */
+.stars { display: inline-flex; gap: 1px; margin-top: 10px; }
+.star { background: none; border: none; padding: 2px; cursor: pointer; font-size: 17px; line-height: 1; color: #3b4060; transition: color 0.12s, transform 0.1s; }
+.star:hover { transform: scale(1.18); }
+.star.on { color: var(--accent2); }
+.stars-lg .star { font-size: 24px; }
+
+/* "Sources you rate highest" insight panel */
+.sources-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin: 14px 0 4px; }
+.sources-title { font-size: 13px; font-weight: 700; color: var(--accent2); margin-bottom: 11px; letter-spacing: 0.2px; }
+.sources-list { display: flex; flex-direction: column; gap: 8px; }
+.source-row { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+.source-name { font-weight: 600; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.source-stars { color: var(--accent2); letter-spacing: 1px; flex-shrink: 0; }
+.source-meta { color: var(--text-muted); font-size: 12px; white-space: nowrap; flex-shrink: 0; }
+.sources-foot { margin-top: 11px; font-size: 11.5px; color: var(--text-muted); }
+
+/* Player rating row */
+.player-rate { display: flex; align-items: center; gap: 12px; padding: 12px 18px 0; }
+.player-rate-label { font-size: 13px; color: var(--text-muted); }
+
 .no-results { color: var(--text-muted); padding: 30px 0; }
 .foot-note { margin-top: 40px; font-size: 12.5px; }
 .foot-note a { color: var(--accent); text-decoration: none; }

@@ -41,6 +41,12 @@
       <p class="muted" id="intro-progress"></p>
     </div>
 
+    <div id="sources-panel" class="sources-panel hidden">
+      <div class="sources-title">★ Sources you rate highest</div>
+      <div class="sources-list" id="sources-list"></div>
+      <div class="sources-foot">Rate the videos you watch (1–5 stars) to build this list.</div>
+    </div>
+
     <div class="controls">
       <input type="search" id="search" class="search" placeholder="Search moves…" autocomplete="off">
       <div class="filters" id="filters">
@@ -71,6 +77,10 @@
       </div>
       <div class="player-frame"><iframe id="player-iframe" src="" title="video" frameborder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+      <div class="player-rate">
+        <span class="player-rate-label">Rate this video</span>
+        <div class="stars stars-lg" id="player-stars"></div>
+      </div>
       <div class="player-foot">
         <a id="player-yt" href="#" target="_blank" class="btn btn-search">Open on YouTube ↗</a>
         <button class="btn btn-started" onclick="setFromPlayer('started')">Mark started</button>

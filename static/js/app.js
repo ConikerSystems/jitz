@@ -3,6 +3,7 @@
 
 const PROGRESS_KEY = "jitz.progress";   // { id: "started" | "done" }
 const OLD_WATCHED_KEY = "jitz.watched"; // legacy Set of ids -> migrated to "done"
+const RATINGS_KEY = "jitz.ratings";     // { id: 1..5 } per-video star rating
 
 const STATES = {
   none:    { label: "Not started", short: "○ Not started" },
@@ -36,6 +37,72 @@ function setState(id, state) {
   if (state === "none") delete p[id]; else p[id] = state;
   saveProgress(p);
   applyProgress();
+}
+
+// ---- Ratings (per-video, 1-5 stars; powers the "top sources" insights) ----
+function getRatings() {
+  try { return JSON.parse(localStorage.getItem(RATINGS_KEY) || "{}"); }
+  catch (e) { return {}; }
+}
+function saveRatings(r) { localStorage.setItem(RATINGS_KEY, JSON.stringify(r)); }
+function ratingOf(id) { return getRatings()[id] || 0; }
+function setRating(id, n) {
+  const r = getRatings();
+  if (!n) delete r[id]; else r[id] = n;
+  saveRatings(r);
+  applyRatings();
+}
+// Clicking the current rating again clears it.
+function rateClick(id, star) { setRating(id, star === ratingOf(id) ? 0 : star); }
+
+function starButtons(id) {
+  let s = "";
+  for (let n = 1; n <= 5; n++) {
+    s += `<button class="star" data-act="rate" data-id="${esc(id)}" data-star="${n}" ` +
+         `aria-label="Rate ${n} of 5">★</button>`;
+  }
+  return s;
+}
+
+function applyRatings() {
+  const r = getRatings();
+  document.querySelectorAll(".stars").forEach((group) => {
+    const rating = r[group.dataset.rateId] || 0;
+    group.querySelectorAll(".star").forEach((st) => {
+      st.classList.toggle("on", parseInt(st.dataset.star, 10) <= rating);
+    });
+  });
+  buildSourcesPanel();
+}
+
+// Aggregate ratings by video author so the user can see which sources they like.
+function buildSourcesPanel() {
+  const r = getRatings();
+  const byAuthor = {};
+  MOVES.forEach((m) => {
+    if (m.youtube && r[m.id]) {
+      const a = m.video_author || "Unknown";
+      const e = (byAuthor[a] = byAuthor[a] || { sum: 0, count: 0 });
+      e.sum += r[m.id];
+      e.count += 1;
+    }
+  });
+  const rows = Object.entries(byAuthor)
+    .map(([author, v]) => ({ author, avg: v.sum / v.count, count: v.count }))
+    .sort((x, y) => y.avg - x.avg || y.count - x.count);
+
+  const panel = document.getElementById("sources-panel");
+  const list = document.getElementById("sources-list");
+  if (!panel || !list) return;
+  if (!rows.length) { panel.classList.add("hidden"); return; }
+  panel.classList.remove("hidden");
+  list.innerHTML = rows.map((row) => {
+    const full = Math.round(row.avg);
+    const stars = "★★★★★".slice(0, full) + "☆☆☆☆☆".slice(0, 5 - full);
+    return `<div class="source-row"><span class="source-name">${esc(row.author)}</span>` +
+           `<span class="source-stars">${stars}</span>` +
+           `<span class="source-meta">${row.avg.toFixed(1)} · ${row.count} rated</span></div>`;
+  }).join("");
 }
 
 // ---- Render ----
@@ -77,6 +144,7 @@ function cardHTML(m) {
       ${action}
       <button class="btn btn-status" data-act="status" data-id="${esc(m.id)}"></button>
     </div>
+    ${hasVideo ? `<div class="stars" data-rate-id="${esc(m.id)}">${starButtons(m.id)}</div>` : ""}
   </div>`;
 }
 
@@ -116,6 +184,7 @@ function render(data) {
   document.getElementById("grid").innerHTML = MOVES.map(cardHTML).join("");
 
   applyProgress();
+  applyRatings();
   applyFilters();
 }
 
@@ -179,7 +248,14 @@ document.getElementById("grid").addEventListener("click", (e) => {
     setState(id, CYCLE[stateOf(id)]);
   } else if (btn.dataset.act === "watch") {
     openVideo(id);
+  } else if (btn.dataset.act === "rate") {
+    rateClick(id, parseInt(btn.dataset.star, 10));
   }
+});
+// Star clicks inside the player modal.
+document.getElementById("player").addEventListener("click", (e) => {
+  const st = e.target.closest(".star");
+  if (st) rateClick(st.dataset.id, parseInt(st.dataset.star, 10));
 });
 
 // ---- Player ----
@@ -195,6 +271,11 @@ function openVideo(id) {
   document.getElementById("player-sub").textContent =
     `${card.dataset.vtitle} — ${card.dataset.vauthor}`;
   document.getElementById("player-yt").href = `https://www.youtube.com/watch?v=${card.dataset.yt}`;
+  // Star rating row for this video.
+  const ps = document.getElementById("player-stars");
+  ps.dataset.rateId = id;
+  ps.innerHTML = starButtons(id);
+  applyRatings();
   document.getElementById("player").classList.remove("hidden");
   // Opening a video implies you've at least started it.
   if (stateOf(id) === "none") setState(id, "started");
