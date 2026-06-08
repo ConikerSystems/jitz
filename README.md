@@ -1,8 +1,7 @@
 # Jitz
 
 A personal study tool for **Royce Gracie Jiu-Jitsu** — the foundational
-**Gracie Combatives** curriculum (36 essential techniques across 23 classes),
-as taught at the [Royce Gracie Jiu-Jitsu Academy of Cary](https://roycegraciecary.com).
+**Gracie Combatives** curriculum (36 essential techniques across 23 classes).
 
 Browse every move by position and category, and watch the technique on an
 embedded YouTube video. Your progress — **Not started / Started / Completed** —

@@ -160,12 +160,14 @@ function render(data) {
     `${withVideo} of ${total} moves have a verified video so far.`;
   const dojo = meta.dojo || {};
   const dlink = document.getElementById("dojo-link");
-  if (dojo.url) {
-    dlink.href = dojo.url;
-    dlink.textContent = `${dojo.name || "Dojo"} ↗`;
-    if (dojo.location) dlink.title = dojo.location;
-  } else {
-    dlink.classList.add("hidden");
+  if (dlink) {
+    if (dojo.url) {
+      dlink.href = dojo.url;
+      dlink.textContent = `${dojo.name || "Dojo"} ↗`;
+      if (dojo.location) dlink.title = dojo.location;
+    } else {
+      dlink.classList.add("hidden");
+    }
   }
 
   // Category chips

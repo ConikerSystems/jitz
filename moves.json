@@ -1,13 +1,8 @@
 {
   "meta": {
     "title": "Royce Gracie Jiu-Jitsu — Gracie Combatives",
-    "source": "Gracie Combatives (36 essential techniques / 23 classes), the foundational self-defense curriculum taught at Royce Gracie Jiu-Jitsu Academy of Cary.",
-    "note": "Official class calendars rotate which two techniques pair per class, but the 36 core techniques are stable. Videos are verified, embeddable YouTube links from Gracie-lineage instructors; 34 of the 36 techniques have one (the Rear Takedown and Double Underhook Pass are still pending a verified video).",
-    "dojo": {
-      "name": "Royce Gracie Jiu-Jitsu Academy of Cary",
-      "url": "https://roycegraciecary.com",
-      "location": "325 Sembler Lane, Cary, NC 27519"
-    }
+    "source": "Gracie Combatives (36 essential techniques / 23 classes), the foundational self-defense curriculum of Royce Gracie Jiu-Jitsu.",
+    "note": "Official class calendars rotate which two techniques pair per class, but the 36 core techniques are stable. Videos are verified, embeddable YouTube links from Gracie-lineage instructors; 34 of the 36 techniques have one (the Rear Takedown and Double Underhook Pass are still pending a verified video)."
   },
   "moves": [
     {"order": 1, "id": "trap-and-roll-mount", "name": "Trap and Roll Escape", "position": "Mount (bottom)", "category": "Escape", "lesson": 1, "youtube": "zcjpi4Pr41k", "video_title": "Lesson 1: Trap and Roll Mount Escape", "video_author": "Gracie NEPA"},
