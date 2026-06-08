@@ -1,0 +1,51 @@
+{
+  "meta": {
+    "title": "Royce Gracie Jiu-Jitsu — Gracie Combatives",
+    "source": "Gracie Combatives (36 essential techniques / 23 classes), the foundational self-defense curriculum taught at Royce Gracie Jiu-Jitsu Academy of Cary.",
+    "note": "Official class calendars rotate which two techniques pair per class, but the 36 core techniques are stable. Videos on the first 10 are verified, embeddable YouTube links from Gracie-lineage instructors.",
+    "dojo": {
+      "name": "Royce Gracie Jiu-Jitsu Academy of Cary",
+      "url": "https://roycegraciecary.com",
+      "location": "325 Sembler Lane, Cary, NC 27519"
+    }
+  },
+  "moves": [
+    {"order": 1, "id": "trap-and-roll-mount", "name": "Trap and Roll Escape", "position": "Mount (bottom)", "category": "Escape", "lesson": 1, "youtube": "zcjpi4Pr41k", "video_title": "Lesson 1: Trap and Roll Mount Escape", "video_author": "Gracie NEPA"},
+    {"order": 2, "id": "americana-mount", "name": "Americana Armlock", "position": "Mount (top)", "category": "Submission", "lesson": 2, "youtube": "10r-MjGwGM8", "video_title": "Gracie Combatives Lesson 2: Americana Armlock", "video_author": "Andrew Campbell"},
+    {"order": 3, "id": "positional-control-mount", "name": "Positional Control", "position": "Mount (top)", "category": "Control", "lesson": 3, "youtube": "IV1b62xTQBA", "video_title": "Lesson 3: Mount Control", "video_author": "Gracie NEPA"},
+    {"order": 4, "id": "take-the-back-mount", "name": "Take the Back", "position": "Mount (top)", "category": "Transition", "lesson": 4, "youtube": "aWs63-ghiVY", "video_title": "Taking the Back (Technique of the Month)", "video_author": "Gracie Jiu-Jitsu Academy"},
+    {"order": 5, "id": "rear-naked-choke", "name": "Rear Naked Choke", "position": "Back control", "category": "Submission", "lesson": 5, "youtube": "jDaq6Fu1vGc", "video_title": "Clark Gracie — Rear Naked Choke Details", "video_author": "Stephan Kesting"},
+    {"order": 6, "id": "leg-hook-takedown", "name": "Leg Hook Takedown", "position": "Standing", "category": "Takedown", "lesson": 6, "youtube": "CgVvY1iNobw", "video_title": "Gracie Combatives Lesson 6: Leg Hook Takedown", "video_author": "Andrew Campbell"},
+    {"order": 7, "id": "clinch-aggressive", "name": "Clinch (Aggressive Opponent)", "position": "Standing", "category": "Clinch", "lesson": 7, "youtube": "vmIunVWUCZI", "video_title": "Gracie Combatives Lesson 7: Clinch (Aggressive Opponent)", "video_author": "Andrew Campbell"},
+    {"order": 8, "id": "punch-block-series", "name": "Punch Block Series (Stages 1-4)", "position": "Guard (bottom)", "category": "Defense", "lesson": 8, "youtube": "57wfVwV5x0s", "video_title": "Gracie Combatives: Punch Block Series", "video_author": "GracieBreakdown"},
+    {"order": 9, "id": "straight-armlock-mount", "name": "Straight Armlock", "position": "Mount (top)", "category": "Submission", "lesson": 9, "youtube": "VInHmZFljhU", "video_title": "Gracie Jiu-Jitsu: Armbar (Mount)", "video_author": "Gracie Jiu-Jitsu Goldsboro"},
+    {"order": 10, "id": "triangle-choke-guard", "name": "Triangle Choke", "position": "Guard (bottom)", "category": "Submission", "lesson": 10, "youtube": "p23n2Vgoyys", "video_title": "Triangle Choke From Guard", "video_author": "Gracie Charlottesville"},
+
+    {"order": 11, "id": "elevator-sweep", "name": "Elevator Sweep", "position": "Guard (bottom)", "category": "Sweep", "lesson": 11, "youtube": null},
+    {"order": 12, "id": "elbow-escape-mount", "name": "Elbow Escape (Shrimp)", "position": "Mount (bottom)", "category": "Escape", "lesson": 12, "youtube": null},
+    {"order": 13, "id": "positional-control-side", "name": "Positional Control", "position": "Side Mount (top)", "category": "Control", "lesson": 13, "youtube": null},
+    {"order": 14, "id": "body-fold-takedown", "name": "Body Fold Takedown", "position": "Standing", "category": "Takedown", "lesson": 14, "youtube": null},
+    {"order": 15, "id": "clinch-conservative", "name": "Clinch (Conservative Opponent)", "position": "Standing", "category": "Clinch", "lesson": 15, "youtube": null},
+    {"order": 16, "id": "headlock-counters", "name": "Headlock Counters", "position": "Mount (bottom)", "category": "Defense", "lesson": 16, "youtube": null},
+    {"order": 17, "id": "double-leg-takedown", "name": "Double Leg Takedown", "position": "Standing", "category": "Takedown", "lesson": 17, "youtube": null},
+    {"order": 18, "id": "headlock-escape-1", "name": "Headlock Escape 1", "position": "Side Mount (bottom)", "category": "Escape", "lesson": 18, "youtube": null},
+    {"order": 19, "id": "straight-armlock-guard", "name": "Straight Armlock", "position": "Guard (bottom)", "category": "Submission", "lesson": 19, "youtube": null},
+    {"order": 20, "id": "double-ankle-sweep", "name": "Double Ankle Sweep", "position": "Guard (bottom)", "category": "Sweep", "lesson": 20, "youtube": null},
+    {"order": 21, "id": "pull-guard", "name": "Pull Guard", "position": "Standing to Guard", "category": "Transition", "lesson": 21, "youtube": null},
+    {"order": 22, "id": "guillotine-choke", "name": "Guillotine Choke", "position": "Guard / Standing", "category": "Submission", "lesson": 22, "youtube": null},
+    {"order": 23, "id": "headlock-escape-2", "name": "Headlock Escape 2", "position": "Side Mount (bottom)", "category": "Escape", "lesson": 23, "youtube": null},
+    {"order": 24, "id": "guillotine-defense", "name": "Guillotine Defense", "position": "Standing", "category": "Defense", "lesson": null, "youtube": null},
+    {"order": 25, "id": "haymaker-punch-defense", "name": "Haymaker Punch Defense", "position": "Standing", "category": "Defense", "lesson": null, "youtube": null},
+    {"order": 26, "id": "rear-takedown", "name": "Rear Takedown", "position": "Standing", "category": "Takedown", "lesson": null, "youtube": null},
+    {"order": 27, "id": "standing-headlock-defense", "name": "Standing Headlock Defense", "position": "Standing", "category": "Defense", "lesson": null, "youtube": null},
+    {"order": 28, "id": "standing-armlock", "name": "Standing Armlock", "position": "Standing", "category": "Submission", "lesson": null, "youtube": null},
+    {"order": 29, "id": "shrimp-escape", "name": "Shrimp Escape", "position": "Side Mount (bottom)", "category": "Escape", "lesson": null, "youtube": null},
+    {"order": 30, "id": "kimura-armlock", "name": "Kimura Armlock", "position": "Guard (bottom)", "category": "Submission", "lesson": null, "youtube": null},
+    {"order": 31, "id": "punch-block-stage-5", "name": "Punch Block Series (Stage 5)", "position": "Guard (bottom)", "category": "Defense", "lesson": null, "youtube": null},
+    {"order": 32, "id": "hook-sweep", "name": "Hook Sweep", "position": "Guard (bottom)", "category": "Sweep", "lesson": null, "youtube": null},
+    {"order": 33, "id": "take-the-back-guard", "name": "Take the Back", "position": "Guard (bottom)", "category": "Transition", "lesson": null, "youtube": null},
+    {"order": 34, "id": "elbow-escape-side", "name": "Elbow Escape", "position": "Side Mount (bottom)", "category": "Escape", "lesson": null, "youtube": null},
+    {"order": 35, "id": "twisting-arm-control", "name": "Twisting Arm Control", "position": "Turtle / Back", "category": "Control", "lesson": null, "youtube": null},
+    {"order": 36, "id": "double-underhook-pass", "name": "Double Underhook Pass", "position": "Guard (top)", "category": "Pass", "lesson": null, "youtube": null}
+  ]
+}

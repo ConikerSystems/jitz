@@ -1,0 +1,15 @@
+# Jitz — back up code + content only. The move list (moves.json) is public
+# reference content and IS committed; never commit private data or secrets.
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.env
+*.log
+.DS_Store
+.claude/
+# Data / databases (none today, but guard anyway)
+*.db
+*.sqlite
+*.sqlite3
+data/

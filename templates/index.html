@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jitz — Royce Gracie Jiu-Jitsu</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">🥋</span>
+        <div>
+          <div class="logo-text">Jitz</div>
+          <div class="logo-sub">Royce Gracie Jiu-Jitsu · Gracie Combatives</div>
+        </div>
+      </div>
+      <div class="header-meta">
+        <span class="stat" id="progress-stat">0 / {{ total }} watched</span>
+        <a class="dojo-link" href="{{ meta.dojo.url }}" target="_blank" title="{{ meta.dojo.location }}">{{ meta.dojo.name }} ↗</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="intro">
+      <p>{{ meta.source }}</p>
+      <p class="muted">{{ with_video }} of {{ total }} moves have a verified video so far — start with the first 10, the foundation of the curriculum.</p>
+    </div>
+
+    <div class="controls">
+      <input type="search" id="search" class="search" placeholder="Search moves…" autocomplete="off">
+      <div class="filters" id="filters">
+        <button class="chip active" data-cat="all">All</button>
+        {% for c in categories %}
+        <button class="chip" data-cat="{{ c }}">{{ c }}</button>
+        {% endfor %}
+        <button class="chip chip-toggle" id="video-only" data-on="0">▶ Has video</button>
+      </div>
+    </div>
+
+    <div class="move-grid" id="grid">
+      {% for m in moves %}
+      <div class="move-card{% if not m.youtube %} no-video{% endif %}"
+           data-id="{{ m.id }}"
+           data-name="{{ m.name | lower }}"
+           data-pos="{{ m.position | lower }}"
+           data-cat="{{ m.category }}"
+           data-video="{{ '1' if m.youtube else '0' }}"
+           {% if m.youtube %}data-yt="{{ m.youtube }}" data-vtitle="{{ m.video_title }}" data-vauthor="{{ m.video_author }}"{% endif %}>
+        <div class="move-top">
+          <span class="move-order">{{ m.order }}</span>
+          <span class="cat-badge cat-{{ m.category | lower }}">{{ m.category }}</span>
+          <span class="watched-dot" title="Watched">✓</span>
+        </div>
+        <div class="move-name">{{ m.name }}</div>
+        <div class="move-pos">{{ m.position }}{% if m.lesson %} · Lesson {{ m.lesson }}{% endif %}</div>
+        <div class="move-actions">
+          {% if m.youtube %}
+          <button class="btn btn-watch" onclick="openVideo('{{ m.id }}')">▶ Watch</button>
+          {% else %}
+          <a class="btn btn-search" target="_blank"
+             href="https://www.youtube.com/results?search_query=Gracie+Jiu-Jitsu+{{ m.name | urlencode }}+{{ m.position | urlencode }}">Find on YouTube ↗</a>
+          {% endif %}
+          <button class="btn btn-mark" onclick="toggleWatched('{{ m.id }}')">Mark watched</button>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div id="no-results" class="no-results hidden">No moves match.</div>
+  </main>
+
+  <!-- Video player modal -->
+  <div id="player" class="player hidden" onclick="closeVideoBackdrop(event)">
+    <div class="player-box">
+      <div class="player-head">
+        <div>
+          <div id="player-title" class="player-title">—</div>
+          <div id="player-sub" class="player-sub">—</div>
+        </div>
+        <button class="player-close" onclick="closeVideo()">✕</button>
+      </div>
+      <div class="player-frame"><iframe id="player-iframe" src="" title="video" frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+      <div class="player-foot">
+        <a id="player-yt" href="#" target="_blank" class="btn btn-search">Open on YouTube ↗</a>
+        <button class="btn btn-mark" id="player-mark" onclick="markFromPlayer()">Mark watched</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
