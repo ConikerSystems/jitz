@@ -5,24 +5,38 @@ A personal study tool for **Royce Gracie Jiu-Jitsu** — the foundational
 as taught at the [Royce Gracie Jiu-Jitsu Academy of Cary](https://roycegraciecary.com).
 
 Browse every move by position and category, and watch the technique on an
-embedded YouTube video. "Watched" progress is stored in your browser only.
+embedded YouTube video. Your progress — **Not started / Started / Completed** —
+is stored on your device only (localStorage); no account, no server.
 
-## Run
+Jitz is a **static installable web app (PWA)**: it renders the move grid from
+`moves.json` in the browser, installs to the home screen via Safari's
+*Add to Home Screen*, and the interface works offline. Videos themselves still
+need an internet connection.
+
+## Run locally
+
+It's just static files — serve the folder with any static server:
 
 ```bash
-python3 -m venv venv
-venv/bin/pip install -r requirements.txt
-venv/bin/python app.py      # http://127.0.0.1:5009
+python3 -m http.server 5009     # then open http://127.0.0.1:5009
 ```
 
-Part of the **Claude Hub** family — launch/stop it from the hub.
+Part of the **Claude Hub** family.
 
-## Data
+## Hosting
 
-`moves.json` holds the 36 techniques. The first 10 (the foundation of the
-course) have **verified, embeddable** YouTube links from Gracie-lineage
-instructors. The remaining 26 list a name/position/category and a "Find on
-YouTube" search link until a specific video is curated for each.
+Published with **GitHub Pages** from the repo root. The site lives at
+`https://jconiker.github.io/jitz/`. All asset paths are relative so it works
+under the `/jitz/` project sub-path.
+
+## Files
+
+- `index.html` — app shell; `static/js/app.js` builds the cards from `moves.json`.
+- `about.html` — about page.
+- `manifest.webmanifest`, `sw.js`, `icons/` — PWA manifest, service worker, app icons.
+- `moves.json` — the 36 techniques. Lessons 1–20 have **verified, embeddable**
+  YouTube links from Gracie-lineage instructors; the rest list a name / position /
+  category and a "Find on YouTube" search link until a video is curated.
 
 > Move names follow the published Gracie Combatives curriculum. Official class
 > calendars rotate which techniques pair per class; the 36 core techniques are

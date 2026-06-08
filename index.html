@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Jitz — Royce Gracie Jiu-Jitsu</title>
+  <meta name="description" content="Study the Gracie Combatives curriculum — browse every move and watch each technique.">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#0f1117">
+  <link rel="icon" href="icons/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Jitz">
+  <meta name="mobile-web-app-capable" content="yes">
+
+  <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">🥋</span>
+        <div>
+          <div class="logo-text">Jitz</div>
+          <div class="logo-sub">Royce Gracie Jiu-Jitsu · Gracie Combatives</div>
+        </div>
+      </div>
+      <div class="header-meta">
+        <span class="stat" id="progress-stat">—</span>
+        <a class="dojo-link" id="dojo-link" href="#" target="_blank">Dojo ↗</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="intro">
+      <p id="intro-source"></p>
+      <p class="muted" id="intro-progress"></p>
+    </div>
+
+    <div class="controls">
+      <input type="search" id="search" class="search" placeholder="Search moves…" autocomplete="off">
+      <div class="filters" id="filters">
+        <button class="chip active" data-cat="all">All</button>
+        <!-- category chips injected here -->
+        <button class="chip chip-toggle" id="video-only" data-on="0">▶ Has video</button>
+      </div>
+    </div>
+
+    <div class="move-grid" id="grid"></div>
+    <div id="no-results" class="no-results hidden">No moves match.</div>
+
+    <p class="muted foot-note">
+      Progress is saved on this device only (no account, no server).
+      <a href="about.html">About Jitz →</a>
+    </p>
+  </main>
+
+  <!-- Video player modal -->
+  <div id="player" class="player hidden" onclick="closeVideoBackdrop(event)">
+    <div class="player-box">
+      <div class="player-head">
+        <div>
+          <div id="player-title" class="player-title">—</div>
+          <div id="player-sub" class="player-sub">—</div>
+        </div>
+        <button class="player-close" onclick="closeVideo()" aria-label="Close">✕</button>
+      </div>
+      <div class="player-frame"><iframe id="player-iframe" src="" title="video" frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+      <div class="player-foot">
+        <a id="player-yt" href="#" target="_blank" class="btn btn-search">Open on YouTube ↗</a>
+        <button class="btn btn-started" onclick="setFromPlayer('started')">Mark started</button>
+        <button class="btn btn-done" onclick="setFromPlayer('done')">Mark completed</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="static/js/app.js"></script>
+</body>
+</html>
