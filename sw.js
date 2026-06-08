@@ -1,6 +1,7 @@
-/* Jitz service worker — caches the app shell + moves.json so the UI works
-   offline. Videos are cross-origin (YouTube) and always require the network. */
-const VERSION = "jitz-v6";          // bump to invalidate old caches on deploy
+/* Jitz service worker — NETWORK-FIRST so updates always show when online,
+   with a cached copy as the offline fallback. Videos are cross-origin
+   (YouTube) and always require the network. */
+const VERSION = "jitz-v7";          // bump to invalidate old caches on deploy
 const SHELL = [
   "./",
   "index.html",
@@ -16,6 +17,7 @@ const SHELL = [
 ];
 
 self.addEventListener("install", (event) => {
+  // Pre-cache the shell for offline use, then take over immediately.
   event.waitUntil(
     caches.open(VERSION).then((cache) => cache.addAll(SHELL)).then(() => self.skipWaiting())
   );
@@ -37,35 +39,23 @@ self.addEventListener("fetch", (event) => {
   // Only handle our own origin; let YouTube/etc. go straight to the network.
   if (url.origin !== self.location.origin) return;
 
-  // moves.json: network-first so freshly curated videos show up, cache fallback offline.
-  if (url.pathname.endsWith("moves.json")) {
-    event.respondWith(
-      fetch(req)
-        .then((res) => {
+  // Network-first: always try the live copy so new content shows up right away.
+  // Cache the fresh response, and fall back to cache (or index.html) when offline.
+  event.respondWith(
+    fetch(req)
+      .then((res) => {
+        if (res && res.ok && res.type === "basic") {
           const copy = res.clone();
           caches.open(VERSION).then((c) => c.put(req, copy));
-          return res;
-        })
-        .catch(() => caches.match(req))
-    );
-    return;
-  }
-
-  // Everything else (shell): cache-first, fall back to network, then to index.html for navigations.
-  event.respondWith(
-    caches.match(req).then((cached) => {
-      if (cached) return cached;
-      return fetch(req)
-        .then((res) => {
-          if (res.ok && res.type === "basic") {
-            const copy = res.clone();
-            caches.open(VERSION).then((c) => c.put(req, copy));
-          }
-          return res;
-        })
-        .catch(() => {
+        }
+        return res;
+      })
+      .catch(() =>
+        caches.match(req).then((cached) => {
+          if (cached) return cached;
           if (req.mode === "navigate") return caches.match("index.html");
-        });
-    })
+          return Response.error();
+        })
+      )
   );
 });
