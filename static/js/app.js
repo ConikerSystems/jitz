@@ -125,7 +125,7 @@ function cardHTML(m) {
     encodeURIComponent(`Gracie Jiu-Jitsu ${m.name} ${m.position}`);
   const action = hasVideo
     ? `<button class="btn btn-watch" data-act="watch" data-id="${esc(m.id)}">▶ Watch</button>`
-    : `<a class="btn btn-search" target="_blank" href="${esc(searchHref)}">Find on YouTube ↗</a>`;
+    : `<a class="btn btn-search yt-out" target="_blank" href="${esc(searchHref)}">Find on YouTube ↗</a>`;
   return `
   <div class="move-card${hasVideo ? "" : " no-video"}"
        data-id="${esc(m.id)}"
@@ -266,7 +266,7 @@ function openVideo(id) {
   if (!card || !card.dataset.yt) return;
   currentMoveId = id;
   document.getElementById("player-iframe").src =
-    `https://www.youtube.com/embed/${card.dataset.yt}?rel=0&autoplay=1`;
+    `https://www.youtube-nocookie.com/embed/${card.dataset.yt}?rel=0&autoplay=1&modestbranding=1`;
   document.getElementById("player-title").textContent = card.querySelector(".move-name").textContent;
   document.getElementById("player-sub").textContent =
     `${card.dataset.vtitle} — ${card.dataset.vauthor}`;
@@ -289,6 +289,15 @@ function closeVideo() {
 function closeVideoBackdrop(e) { if (e.target.id === "player") closeVideo(); }
 function setFromPlayer(state) { if (currentMoveId) setState(currentMoveId, state); }
 document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeVideo(); });
+
+// ---- Hide outbound YouTube links on iPhone/iPad (kept on Mac/desktop) ----
+// The embedded player still works; this only removes links that open the full
+// YouTube site/app. iPadOS reports as "Mac" but has touch points, so check both.
+const ua = navigator.userAgent || "";
+const isAppleTouch =
+  /iPhone|iPad|iPod/.test(ua) ||
+  (/Mac/.test(navigator.platform || ua) && navigator.maxTouchPoints > 1);
+if (isAppleTouch) document.body.classList.add("hide-yt");
 
 // ---- Boot ----
 fetch("moves.json", { cache: "no-cache" })

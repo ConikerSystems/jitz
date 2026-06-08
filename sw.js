@@ -1,6 +1,6 @@
 /* Jitz service worker — caches the app shell + moves.json so the UI works
    offline. Videos are cross-origin (YouTube) and always require the network. */
-const VERSION = "jitz-v4";          // bump to invalidate old caches on deploy
+const VERSION = "jitz-v5";          // bump to invalidate old caches on deploy
 const SHELL = [
   "./",
   "index.html",

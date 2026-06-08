@@ -117,6 +117,16 @@ main { max-width: 1150px; margin: 0 auto; padding: 28px 24px 80px; }
 .about-wrap p { line-height: 1.6; margin-bottom: 14px; }
 .about-wrap .btn { margin-right: 8px; }
 
+/* On iPhone/iPad, hide links that open the full YouTube site (set via JS).
+   The embedded in-app player still works. */
+body.hide-yt .yt-out { display: none !important; }
+
+/* Footer — Developed by Coniker Systems */
+.site-footer { text-align: center; padding: 24px; font-size: 12px; color: var(--text-muted); border-top: 1px solid var(--border); margin-top: 20px; }
+.site-footer a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+.site-footer a:hover { color: var(--text); }
+.footer-sep { margin: 0 8px; }
+
 /* Honor the side/bottom safe areas (landscape notch, home indicator) */
 main { padding-left: max(24px, env(safe-area-inset-left)); padding-right: max(24px, env(safe-area-inset-right)); padding-bottom: max(80px, env(safe-area-inset-bottom)); }
 
