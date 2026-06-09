@@ -127,7 +127,7 @@ function cardHTML(m) {
     ? `<button class="btn btn-watch" data-act="watch" data-id="${esc(m.id)}">▶ Watch</button>`
     : `<a class="btn btn-search yt-out" target="_blank" href="${esc(searchHref)}">Find on YouTube ↗</a>`;
   return `
-  <div class="move-card${hasVideo ? "" : " no-video"}"
+  <div class="move-card${hasVideo ? "" : " no-video"}${m.dojo ? " is-dojo" : ""}"
        data-id="${esc(m.id)}"
        data-name="${esc(String(m.name).toLowerCase())}"
        data-pos="${esc(String(m.position).toLowerCase())}"
@@ -136,6 +136,7 @@ function cardHTML(m) {
     <div class="move-top">
       <span class="move-order">${esc(m.order)}</span>
       <span class="cat-badge ${catClass}">${esc(m.category)}</span>
+      ${m.dojo ? `<span class="dojo-flag">My Dojo</span>` : ""}
       <span class="status-dot" title=""></span>
     </div>
     <div class="move-name">${esc(m.name)}</div>
@@ -182,8 +183,17 @@ function render(data) {
     filters.insertBefore(b, toggle);
   });
 
-  // Cards
-  document.getElementById("grid").innerHTML = MOVES.map(cardHTML).join("");
+  // Cards, split into a "My Dojo" group (shown first) and the Gracie Combatives list.
+  const dojoMoves = MOVES.filter((m) => m.dojo);
+  const otherMoves = MOVES.filter((m) => !m.dojo);
+  const sectionHTML = (title, sub, moves, key) => moves.length ? `
+    <section class="move-section" data-section="${key}">
+      <h2 class="section-title">${title}${sub ? ` <span class="section-sub">${sub}</span>` : ""}</h2>
+      <div class="move-grid">${moves.map(cardHTML).join("")}</div>
+    </section>` : "";
+  document.getElementById("sections").innerHTML =
+    sectionHTML("🥋 My Dojo", "— techniques taught to me in person", dojoMoves, "dojo") +
+    sectionHTML("Gracie Combatives", "", otherMoves, "combatives");
 
   applyProgress();
   applyRatings();
@@ -224,6 +234,10 @@ function applyFilters() {
     card.classList.toggle("hidden", !show);
     if (show) visible++;
   });
+  // Hide a section heading when none of its cards are visible.
+  document.querySelectorAll(".move-section").forEach((sec) => {
+    sec.classList.toggle("hidden", !sec.querySelector(".move-card:not(.hidden)"));
+  });
   document.getElementById("no-results").classList.toggle("hidden", visible > 0);
 }
 
@@ -242,7 +256,7 @@ document.getElementById("filters").addEventListener("click", (e) => {
   }
   applyFilters();
 });
-document.getElementById("grid").addEventListener("click", (e) => {
+document.getElementById("sections").addEventListener("click", (e) => {
   const btn = e.target.closest("[data-act]");
   if (!btn) return;
   const id = btn.dataset.id;
@@ -306,7 +320,7 @@ fetch("moves.json", { cache: "no-cache" })
   .then((r) => r.json())
   .then(render)
   .catch((err) => {
-    document.getElementById("grid").innerHTML =
+    document.getElementById("sections").innerHTML =
       `<p class="no-results">Couldn't load moves.json. ${esc(err.message || err)}</p>`;
   });
 

@@ -40,6 +40,13 @@ main { max-width: 1150px; margin: 0 auto; padding: 28px 24px 80px; }
 .chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
 .chip-toggle.active { background: var(--accent2); border-color: var(--accent2); color: #1a1d27; }
 
+/* Sections (My Dojo group, then Gracie Combatives) */
+.move-section { margin-bottom: 30px; }
+.move-section + .move-section { margin-top: 6px; }
+.section-title { font-size: 15px; font-weight: 800; letter-spacing: 0.2px; margin: 4px 0 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.section-sub { font-size: 12.5px; font-weight: 500; color: var(--text-muted); }
+.move-section[data-section="dojo"] .section-title { color: var(--accent2); border-bottom-color: rgba(245,158,11,0.35); }
+
 .move-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
 .move-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 16px 14px; display: flex; flex-direction: column; gap: 8px; transition: border-color 0.15s, transform 0.12s; }
 .move-card:hover { border-color: var(--accent); transform: translateY(-2px); }
@@ -53,6 +60,9 @@ main { max-width: 1150px; margin: 0 auto; padding: 28px 24px 80px; }
 .cat-escape { background: #3b82f6; } .cat-submission { background: #e11d48; } .cat-control { background: #8b5cf6; }
 .cat-takedown { background: #f59e0b; color:#1a1d27; } .cat-sweep { background: #14b8a6; } .cat-defense { background: #64748b; }
 .cat-clinch { background: #ec4899; } .cat-transition { background: #6366f1; } .cat-pass { background: #0ea5e9; }
+.cat-drill { background: #2dd4bf; color:#0c2420; } .cat-strike { background: #fb923c; color:#1a1d27; }
+.dojo-flag { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 2px 8px; border-radius: 12px; color: #1a1d27; background: var(--accent2); }
+.move-card.is-dojo { border-left: 3px solid var(--accent2); }
 .status-dot { margin-left: auto; width: 10px; height: 10px; border-radius: 50%; background: var(--border); flex-shrink: 0; transition: background 0.15s; }
 .move-card.status-started .status-dot { background: var(--accent2); }
 .move-card.status-done .status-dot { background: #4ade80; }
