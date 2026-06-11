@@ -60,15 +60,17 @@
 
     <p class="muted foot-note">
       Progress is saved on this device only (no account, no server).
-      <a href="about.html">About Jitz →</a>
     </p>
+
+    <div class="home-footer">
+      <button class="foot-btn" onclick="location.href='about.html'">ℹ️&nbsp; About</button>
+      <button class="foot-btn" onclick="window.Feedback && window.Feedback.shareApp()">📤&nbsp; Share</button>
+      <button class="foot-btn" onclick="window.Feedback && window.Feedback.open()">💬&nbsp; Feedback</button>
+      <button class="foot-btn" onclick="updateApp(this)">🔄&nbsp; Update</button>
+    </div>
   </main>
 
-  <footer class="site-footer">
-    <span>Developed by <a href="https://conikersystems.com" target="_blank">Coniker Systems™</a></span>
-    <span class="footer-sep">·</span>
-    <span>© 2026 Coniker Systems™</span>
-  </footer>
+  <footer id="app-footer" class="site-footer"></footer>
 
   <!-- Video player modal -->
   <div id="player" class="player hidden" onclick="closeVideoBackdrop(event)">
@@ -94,9 +96,10 @@
     </div>
   </div>
 
+  <script src="static/js/version.js"></script>
   <script src="static/js/app.js"></script>
   <script>
-    window.APP_INFO = { name: "Jitz", url: "https://conikersystems.github.io/jitz/", email: "joeconiker@gmail.com" };
+    window.APP_INFO = { name: "Jitz", url: "https://conikersystems.github.io/jitz/", email: "info@conikersystems.com", noFab: true };
   </script>
   <script src="static/js/feedback.js"></script>
 </body>

@@ -1,14 +1,16 @@
 /* Jitz service worker — NETWORK-FIRST so updates always show when online,
    with a cached copy as the offline fallback. Videos are cross-origin
    (YouTube) and always require the network. */
-const VERSION = "jitz-v11";         // bump to invalidate old caches on deploy
+const VERSION = "jitz-v12";         // bump to invalidate old caches on deploy
 const SHELL = [
   "./",
   "index.html",
   "about.html",
+  "jitz-about.pdf",
   "manifest.webmanifest",
   "moves.json",
   "static/css/style.css",
+  "static/js/version.js",
   "static/js/app.js",
   "static/js/feedback.js",
   "icons/icon-192.png",

@@ -315,6 +315,35 @@ const isAppleTouch =
   (/Mac/.test(navigator.platform || ua) && navigator.maxTouchPoints > 1);
 if (isAppleTouch) document.body.classList.add("hide-yt");
 
+// ---- Footer (auto-year + single-source version) ----
+(function initFooter() {
+  const f = document.getElementById("app-footer");
+  if (f) {
+    f.innerHTML = "© " + new Date().getFullYear()
+      + ' <a href="https://conikersystems.com" target="_blank" rel="noopener">Coniker Systems™</a>'
+      + '<span class="footer-sep">·</span>v' + (window.APP_VERSION || "1.0");
+  }
+})();
+
+// ---- Update button: force-pull the latest version ----
+// iOS often resumes an installed (Home-Screen) app from memory instead of
+// reloading, so it never sees a new release. This updates the service worker,
+// clears caches, and does a cache-busted reload. Needs the network.
+function updateApp(btn) {
+  if (!navigator.onLine) { alert("Connect to Wi-Fi or cellular, then tap Update again."); return; }
+  if (btn) btn.textContent = "🔄  Updating…";
+  (async () => {
+    try {
+      if ("serviceWorker" in navigator) {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map((r) => r.update().catch(() => {})));
+      }
+      if (window.caches) { const ks = await caches.keys(); await Promise.all(ks.map((k) => caches.delete(k))); }
+    } catch (e) { /* ignore */ }
+    location.href = "index.html?u=" + Date.now(); // cache-busted reload
+  })();
+}
+
 // ---- Boot ----
 fetch("moves.json", { cache: "no-cache" })
   .then((r) => r.json())

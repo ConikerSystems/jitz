@@ -120,22 +120,76 @@ main { max-width: 1150px; margin: 0 auto; padding: 28px 24px 80px; }
 .player-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; }
 .player-foot { display: flex; gap: 10px; padding: 14px 18px; }
 
-/* About page */
-.about-wrap { max-width: 720px; margin: 60px auto; padding: 0 24px; }
-.about-title { font-size: 34px; font-weight: 800; }
-.about-tagline { font-size: 16px; color: var(--text-muted); margin: 8px 0 20px; }
-.about-wrap p { line-height: 1.6; margin-bottom: 14px; }
-.about-wrap .btn { margin-right: 8px; }
+/* Home footer button row (About / Share / Feedback / Update) */
+.home-footer { display: flex; gap: 12px; justify-content: center; margin-top: 36px; flex-wrap: wrap; }
+.foot-btn { font-family: var(--font); border: 1px solid var(--border); background: var(--surface); color: var(--text); border-radius: 999px; padding: 10px 20px; font-size: 14px; cursor: pointer; }
+.foot-btn:hover { border-color: var(--accent); }
+.foot-btn:active { background: var(--surface2); }
+
+/* ---- About page (Coniker Systems standard) ---- */
+header.about-bar { height: 56px; display: flex; align-items: center; justify-content: space-between;
+  padding: env(safe-area-inset-top) 16px 0; background: var(--surface); border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 100; }
+header.about-bar .logo-wrap { display: flex; align-items: center; gap: 10px; font-size: 17px; }
+header.about-bar .logo-wrap .logo-emoji { font-size: 24px; }
+header.about-bar .nav { display: flex; align-items: center; gap: 10px; }
+header.about-bar .chip { text-decoration: none; }
+a.chip { display: inline-flex; align-items: center; }
+.about-main { max-width: 760px; margin: 0 auto; padding: 36px 22px 60px; }
+.about-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(22px, 5vw, 44px); }
+.about-hero { text-align: center; margin-bottom: 40px; padding-bottom: 32px; border-bottom: 1px solid var(--border); }
+.about-hero .about-logo { width: 64px; height: 64px; border-radius: 16px; margin: 0 auto 16px; display: grid; place-items: center;
+  font-size: 34px; background: var(--surface2); border: 1px solid var(--border); border-bottom: 5px solid var(--accent); }
+.about-hero h1 { font-size: 34px; font-weight: 800; letter-spacing: -0.5px; margin: 0 0 8px; }
+.about-tagline { font-size: 19px; font-weight: 600; color: var(--text); margin: 0 0 6px; }
+.about-sub { font-size: 15px; color: var(--text-muted); margin: 0; }
+.about-section { margin-bottom: 40px; }
+.about-section h2 { font-size: 16px; font-weight: 700; margin: 0 0 14px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.04em; }
+.about-section p { font-size: 15px; line-height: 1.75; color: #c7ccd8; margin: 0 0 12px; }
+.about-section b { color: var(--text); }
+.audience-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 560px) { .audience-grid { grid-template-columns: 1fr; } }
+.audience-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+.audience-icon { font-size: 22px; margin-bottom: 8px; }
+.audience-label { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.audience-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+.why-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+@media (max-width: 600px) { .why-grid { grid-template-columns: 1fr; } }
+.why-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+.why-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.why-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.6; }
+.get-steps { margin: 8px 0 8px 4px; padding-left: 22px; color: #c7ccd8; line-height: 1.9; font-size: 15px; }
+.get-steps b { color: var(--text); }
+.get-tip { font-size: 13.5px; color: var(--text-muted); }
+.about-cta { text-align: center; margin: 40px 0 8px; }
+.process-btn { display: inline-block; text-decoration: none; padding: 14px 32px; background: var(--accent); color: #fff;
+  border: none; border-radius: 999px; font-size: 16px; font-weight: 650; cursor: pointer; }
+.about-brand { margin-top: 30px; }
+.brand-divider { height: 1px; background: var(--border); margin-bottom: 18px; }
+.brand-line { font-size: 13px; color: var(--text-muted); text-align: center; }
+.brand-link { color: var(--text-muted); text-decoration: none; }
+.brand-link:hover { color: var(--accent); }
+.brand-sep { margin: 0 8px; }
 
 /* On iPhone/iPad, hide links that open the full YouTube site (set via JS).
    The embedded in-app player still works. */
 body.hide-yt .yt-out { display: none !important; }
 
-/* Footer — Developed by Coniker Systems */
+/* Footer — © <year> Coniker Systems™ · v<version> */
 .site-footer { text-align: center; padding: 24px; font-size: 12px; color: var(--text-muted); border-top: 1px solid var(--border); margin-top: 20px; }
 .site-footer a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
 .site-footer a:hover { color: var(--text); }
 .footer-sep { margin: 0 8px; }
+
+@media print {
+  header.about-bar, .about-cta, .home-footer { display: none !important; }
+  body { background: #fff !important; color: #111 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .about-section, .why-item, .audience-item { page-break-inside: avoid; }
+  .about-card { border: none !important; padding: 0 !important; background: #fff !important; }
+  .about-hero h1, .about-tagline, .about-section h2, .about-section p, .about-section b,
+  .audience-label, .audience-desc, .why-title, .why-desc, .brand-line, .get-steps { color: #111 !important; }
+  .audience-item, .why-item { background: #f5f5f5 !important; border-color: #ccc !important; }
+}
 
 /* Honor the side/bottom safe areas (landscape notch, home indicator) */
 main { padding-left: max(24px, env(safe-area-inset-left)); padding-right: max(24px, env(safe-area-inset-right)); padding-bottom: max(80px, env(safe-area-inset-bottom)); }

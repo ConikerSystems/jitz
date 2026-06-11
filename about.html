@@ -1,32 +1,190 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>About · Jitz</title>
-  <link rel="manifest" href="manifest.webmanifest">
-  <meta name="theme-color" content="#0f1117">
-  <link rel="icon" href="icons/favicon-32.png" sizes="32x32">
-  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="static/css/style.css">
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#0f1117" />
+  <link rel="icon" href="icons/favicon-32.png" sizes="32x32" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <link rel="stylesheet" href="static/css/style.css" />
+  <script src="static/js/version.js"></script>
 </head>
-<body>
-  <main class="about-wrap">
-    <h1 class="about-title">Jitz</h1>
-    <p class="about-tagline">Study Royce Gracie Jiu-Jitsu — browse the Gracie Combatives curriculum and watch each move.</p>
-    <p>Jitz is a personal study tool for the foundational <b>Gracie Combatives</b> curriculum — the 36 essential
-       self-defense techniques of <b>Royce Gracie Jiu-Jitsu</b>. Each technique lists its position and category,
-       and the curated lessons link to a verified instructional video you can watch right in the app.</p>
-    <p>Jitz installs to your home screen and the interface works offline (the videos themselves still need an
-       internet connection). Your progress — Not started, Started, or Completed — is saved on this device only;
-       there is no account and no server.</p>
-    <p><a class="btn btn-watch" href="index.html">← Open Jitz</a></p>
+<body class="about-page">
+  <header class="about-bar">
+    <div class="logo-wrap">
+      <span class="logo-emoji" aria-hidden="true">🥋</span>
+      <strong>Jitz</strong>
+    </div>
+    <div class="nav">
+      <a class="chip" href="index.html">← Back</a>
+      <button class="chip" id="share-btn">📤 Share</button>
+      <button class="chip" id="pdf-btn">Download PDF</button>
+    </div>
+  </header>
+
+  <main class="about-main">
+    <div class="about-card">
+
+      <div class="about-hero">
+        <div class="about-logo" aria-hidden="true">🥋</div>
+        <h1>Jitz</h1>
+        <p class="about-tagline">Study Royce Gracie Jiu-Jitsu, one move at a time.</p>
+        <p class="about-sub">Browse the Gracie Combatives curriculum and watch each technique.</p>
+      </div>
+
+      <section class="about-section">
+        <h2>What Jitz Does</h2>
+        <p>Jitz is a personal study tool for the foundational <b>Gracie Combatives</b> curriculum — the
+           essential self-defense techniques of <b>Royce Gracie Jiu-Jitsu</b>. Each technique lists its
+           position and category, and the curated lessons link to a verified instructional video you can
+           watch right inside the app.</p>
+        <p>Mark each move as <b>Not started</b>, <b>Started</b>, or <b>Completed</b> as you work through it,
+           and rate the videos you watch (1–5 stars) to build a list of the instructors you learn best from.</p>
+      </section>
+
+      <section class="about-section">
+        <h2>What's Inside</h2>
+        <div class="why-grid">
+          <div class="why-item">
+            <div class="why-title">🥋 Full Curriculum</div>
+            <div class="why-desc">Every Gracie Combatives technique, organized by position and category.</div>
+          </div>
+          <div class="why-item">
+            <div class="why-title">▶ In-App Video</div>
+            <div class="why-desc">Watch a verified instructional for each move without leaving the app.</div>
+          </div>
+          <div class="why-item">
+            <div class="why-title">🔎 Search &amp; Filter</div>
+            <div class="why-desc">Find any move by name or position, or filter to the ones that have a video.</div>
+          </div>
+          <div class="why-item">
+            <div class="why-title">✓ Track Progress</div>
+            <div class="why-desc">Mark moves Not started, Started, or Completed — saved on your device.</div>
+          </div>
+          <div class="why-item">
+            <div class="why-title">⭐ Rate Sources</div>
+            <div class="why-desc">Star the videos you watch to surface the instructors you rate highest.</div>
+          </div>
+          <div class="why-item">
+            <div class="why-title">🥋 My Dojo</div>
+            <div class="why-desc">Techniques taught to you in person are grouped and shown first.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="about-section">
+        <h2>Who It's For</h2>
+        <div class="audience-grid">
+          <div class="audience-item">
+            <div class="audience-icon">🌱</div>
+            <div class="audience-label">New Students</div>
+            <div class="audience-desc">Working through the Combatives curriculum and want a clear map of every move.</div>
+          </div>
+          <div class="audience-item">
+            <div class="audience-icon">🔁</div>
+            <div class="audience-label">Anyone Reviewing</div>
+            <div class="audience-desc">Revisit a technique before class and watch it again, anytime.</div>
+          </div>
+          <div class="audience-item">
+            <div class="audience-icon">✈️</div>
+            <div class="audience-label">Study Anywhere</div>
+            <div class="audience-desc">The interface works offline once installed (the videos themselves still need a connection).</div>
+          </div>
+          <div class="audience-item">
+            <div class="audience-icon">🥋</div>
+            <div class="audience-label">Dojo Members</div>
+            <div class="audience-desc">Keep the moves taught to you in person in their own group, front and center.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="about-section">
+        <h2>Private &amp; Offline</h2>
+        <p>Jitz installs to your home screen and the interface <b>works offline</b> (the videos themselves
+           still need an internet connection). Your progress — Not started, Started, or Completed — is saved
+           <b>on this device only</b>; there is no account and no server.</p>
+        <p>And because it's <b>privately developed by Coniker Systems™</b>, there are <b>no ads — ever.</b></p>
+      </section>
+
+      <section class="about-section" id="get-it">
+        <h2>Get Jitz on Your iPad</h2>
+        <p>It's a free web app — nothing to buy, no App Store needed. To keep it on your iPad or iPhone so it
+           opens like a normal app and works offline:</p>
+        <ol class="get-steps">
+          <li>In <b>Safari</b> (you're likely here already), tap the <b>Share</b> button — the square with an arrow.</li>
+          <li>Choose <b>“Add to Home Screen.”</b></li>
+          <li>Tap <b>Add</b> — a Jitz icon appears on your home screen.</li>
+          <li>Open it from the home screen. It runs full-screen and <b>works offline</b>.</li>
+        </ol>
+        <div class="about-cta">
+          <a class="process-btn" href="index.html">▶ Open Jitz</a>
+        </div>
+        <p class="get-tip">Want to send it to someone? Tap <b>Share</b> at the top of this page to text or
+           email them the link and these instructions.</p>
+
+        <h2 style="margin-top:28px">Getting New Features</h2>
+        <p>New moves and features are added regularly. To get the latest version, just tap <b>🔄 Update</b>
+           on the home screen while connected to Wi-Fi — it refreshes itself, and your progress is kept.
+           You can check the version number at the bottom of any screen.</p>
+        <p>Have an idea or found a problem? Tap <b>💬 Feedback</b> on the home screen to send it straight to
+           us — your feedback shapes what gets built next.</p>
+      </section>
+
+      <div class="about-brand">
+        <div class="brand-divider"></div>
+        <div class="brand-line">
+          © <span id="cr-years">2026</span> <a href="https://conikersystems.com" target="_blank" rel="noopener" class="brand-link">Coniker Systems™</a>
+          <span class="brand-sep">·</span>
+          <a href="https://conikersystems.com" target="_blank" rel="noopener" class="brand-link">conikersystems.com</a>
+          <span class="brand-sep">·</span>
+          v<span id="app-ver"></span>
+        </div>
+      </div>
+
+    </div>
   </main>
 
-  <footer class="site-footer">
-    <span>Developed by <a href="https://conikersystems.com" target="_blank">Coniker Systems™</a></span>
-    <span class="footer-sep">·</span>
-    <span>© 2026 Coniker Systems™</span>
-  </footer>
+  <script>
+    document.getElementById("app-ver").textContent = window.APP_VERSION || "1.0";
+    document.getElementById("cr-years").textContent = new Date().getFullYear();
+
+    // This About page's own URL — sharing it lets someone read about Jitz and
+    // see how to install it. Same site, just the /about.html path.
+    var ABOUT_URL = location.origin + location.pathname;
+    var DIR = location.pathname.substring(0, location.pathname.lastIndexOf("/") + 1);
+    var PDF_URL = location.origin + DIR + "jitz-about.pdf";
+    var SHARE_TEXT = "Jitz — study Royce Gracie Jiu-Jitsu on your iPad, free. "
+      + "Here's all about it and how to get it:\n" + ABOUT_URL;
+
+    document.getElementById("share-btn").onclick = async function () {
+      if (navigator.share) {
+        try { await navigator.share({ title: "About Jitz", text: SHARE_TEXT, url: ABOUT_URL }); return; } catch (e) { return; }
+      }
+      try { await navigator.clipboard.writeText(SHARE_TEXT); alert("Link copied — paste it into a text or email."); }
+      catch (e) { window.location.href = "sms:?&body=" + encodeURIComponent(SHARE_TEXT); }
+    };
+
+    // Download PDF — NEVER navigate the window (in a Home-Screen app that traps
+    // the user with no way back). Use the iOS share sheet (an overlay) so they
+    // can Save to Files / share and return straight to the app.
+    var standalone = (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true;
+    document.getElementById("pdf-btn").onclick = async function () {
+      try {
+        const res = await fetch("jitz-about.pdf", { cache: "force-cache" });
+        const blob = await res.blob();
+        const file = new File([blob], "Jitz.pdf", { type: "application/pdf" });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({ files: [file], title: "Jitz" });
+          return;
+        }
+      } catch (e) { /* fall through */ }
+      if (navigator.share) { try { await navigator.share({ title: "Jitz PDF", url: PDF_URL }); return; } catch (e) { return; } }
+      if (!standalone) { window.open("jitz-about.pdf", "_blank"); return; }
+      try { await navigator.clipboard.writeText(PDF_URL); alert("PDF link copied — open it in Safari."); }
+      catch (e) { window.prompt("Open this PDF link in Safari:", PDF_URL); }
+    };
+  </script>
 </body>
 </html>
