@@ -25,7 +25,7 @@ Part of the **Claude Hub** family.
 ## Hosting
 
 Published with **GitHub Pages** from the repo root. The site lives at
-`https://jconiker.github.io/jitz/`. All asset paths are relative so it works
+`https://conikersystems.github.io/jitz/`. All asset paths are relative so it works
 under the `/jitz/` project sub-path.
 
 ## Files
