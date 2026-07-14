@@ -88,6 +88,12 @@ main { max-width: 1150px; margin: 0 auto; padding: 28px 24px 80px; }
 .btn-started { background: var(--accent2); color: #1a1d27; }
 .btn-done { background: #4ade80; color: #14241a; }
 
+/* Watch-count badge (replaces the old status button) */
+.watch-badge { font-family: var(--font); font-size: 13px; font-weight: 700; color: var(--text-muted); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; min-width: 46px; text-align: center; margin-left: auto; align-self: center; }
+.move-card.watched { border-color: #4ade80; }
+.move-card.watched .watch-badge { color: #4ade80; border-color: #4ade80; }
+.move-card.watched .status-dot { background: #4ade80; }
+
 /* Star ratings */
 .stars { display: inline-flex; gap: 1px; margin-top: 10px; }
 .star { background: none; border: none; padding: 2px; cursor: pointer; font-size: 17px; line-height: 1; color: #3b4060; transition: color 0.12s, transform 0.1s; }
@@ -127,8 +133,8 @@ main { max-width: 1150px; margin: 0 auto; padding: 28px 24px 80px; }
 .player-head { display: flex; align-items: flex-start; justify-content: space-between; padding: 16px 18px; gap: 12px; }
 .player-title { font-size: 16px; font-weight: 700; }
 .player-sub { font-size: 12.5px; color: var(--text-muted); margin-top: 3px; }
-.player-close { background: var(--surface2); border: 1px solid var(--border); color: var(--text); width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 14px; flex-shrink: 0; }
-.player-close:hover { border-color: var(--accent); }
+.player-close { background: #e11d48; border: none; color: #fff; width: 46px; height: 46px; border-radius: 10px; cursor: pointer; font-size: 24px; font-weight: 800; line-height: 1; flex-shrink: 0; box-shadow: 0 3px 12px rgba(0,0,0,0.4); }
+.player-close:hover { background: #f43f5e; transform: scale(1.06); }
 .player-frame { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; }
 .player-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; }
 .player-foot { display: flex; gap: 10px; padding: 14px 18px; }

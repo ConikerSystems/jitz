@@ -6,38 +6,37 @@ const OLD_WATCHED_KEY = "jitz.watched"; // legacy Set of ids -> migrated to "don
 const RATINGS_KEY = "jitz.ratings";       // { videoId: 1..5 } per-VIDEO star rating
 const RATINGS_MIGRATED_KEY = "jitz.ratings.v2"; // marker: move-id -> video-id remap done
 
-const STATES = {
-  none:    { label: "Not started", short: "○ Not started" },
-  started: { label: "Started",     short: "◐ Started" },
-  done:    { label: "Completed",   short: "✓ Completed" },
-};
-const CYCLE = { none: "started", started: "done", done: "none" };
+const WATCH_KEY = "jitz.watch";            // { moveId: watchCount }
+const WATCH_MIGRATED_KEY = "jitz.watch.v1"; // marker: legacy progress -> watch-count done
 
-// ---- Progress storage (with one-time migration from the old binary key) ----
-function getProgress() {
+// ---- Watch count (how many times a move has been watched) ----
+function getWatch() {
+  try { return JSON.parse(localStorage.getItem(WATCH_KEY) || "{}"); }
+  catch (e) { return {}; }
+}
+function saveWatch(w) { localStorage.setItem(WATCH_KEY, JSON.stringify(w)); }
+function watchCountOf(id) { return getWatch()[id] || 0; }
+function bumpWatch(id) {
+  const w = getWatch();
+  w[id] = (w[id] || 0) + 1;
+  saveWatch(w);
+  applyWatch();
+}
+// One-time migration: old "done" progress (and the older watched-ids list) each
+// count as one prior watch so existing progress isn't lost.
+function migrateWatch() {
+  if (localStorage.getItem(WATCH_MIGRATED_KEY)) return;
+  const w = getWatch();
   try {
-    const raw = localStorage.getItem(PROGRESS_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch (e) { /* fall through */ }
-  // Migrate legacy "watched" ids -> "done".
+    const p = JSON.parse(localStorage.getItem(PROGRESS_KEY) || "{}");
+    Object.entries(p).forEach(([id, st]) => { if (st === "done" && !w[id]) w[id] = 1; });
+  } catch (e) { /* ignore */ }
   try {
     const old = JSON.parse(localStorage.getItem(OLD_WATCHED_KEY) || "[]");
-    if (Array.isArray(old) && old.length) {
-      const migrated = {};
-      old.forEach((id) => { migrated[id] = "done"; });
-      localStorage.setItem(PROGRESS_KEY, JSON.stringify(migrated));
-      return migrated;
-    }
+    if (Array.isArray(old)) old.forEach((id) => { if (!w[id]) w[id] = 1; });
   } catch (e) { /* ignore */ }
-  return {};
-}
-function saveProgress(p) { localStorage.setItem(PROGRESS_KEY, JSON.stringify(p)); }
-function stateOf(id) { return getProgress()[id] || "none"; }
-function setState(id, state) {
-  const p = getProgress();
-  if (state === "none") delete p[id]; else p[id] = state;
-  saveProgress(p);
-  applyProgress();
+  saveWatch(w);
+  localStorage.setItem(WATCH_MIGRATED_KEY, "1");
 }
 
 // A move can carry several videos (multiple instructor options on one card).
@@ -213,9 +212,6 @@ function watchBtnHTML(m, v, labelAuthor) {
   return `<button class="btn btn-watch" data-act="watch" data-move="${esc(m.id)}" ` +
          `data-yt="${esc(v.youtube)}" data-vtitle="${esc(v.video_title)}" data-vauthor="${esc(v.video_author)}">${label}</button>`;
 }
-function starRowHTML(v) {
-  return `<div class="stars" data-rate-id="${esc(v.youtube)}">${starButtons(v.youtube)}</div>`;
-}
 
 function cardHTML(m) {
   const vids = videosOf(m);
@@ -234,11 +230,10 @@ function cardHTML(m) {
     action = `<a class="btn btn-search yt-out" target="_blank" href="${esc(searchHref)}">Find on YouTube ↗</a>`;
   } else if (vids.length === 1) {
     action = watchBtnHTML(m, vids[0], false);
-    optionsBlock = starRowHTML(vids[0]);
   } else {
     action = "";
     optionsBlock = `<div class="video-options">` +
-      vids.map((v) => `<div class="vopt">${watchBtnHTML(m, v, true)}${starRowHTML(v)}</div>`).join("") +
+      vids.map((v) => `<div class="vopt">${watchBtnHTML(m, v, true)}</div>`).join("") +
       `</div>`;
   }
 
@@ -261,7 +256,7 @@ function cardHTML(m) {
     <div class="move-pos">${esc(m.position)}${lesson}</div>
     <div class="move-actions">
       ${action}
-      <button class="btn btn-status" data-act="status" data-id="${esc(m.id)}"></button>
+      <span class="watch-badge" title="Times watched"></span>
     </div>
     ${optionsBlock}
   </div>`;
@@ -270,6 +265,7 @@ function cardHTML(m) {
 function render(data) {
   MOVES = data.moves;
   migrateRatings();               // move-id -> video-id ratings remap (once)
+  migrateWatch();                 // legacy done/started -> watch count (once)
   const meta = data.meta || {};
   const total = MOVES.length;
   const withVideo = MOVES.filter((m) => videosOf(m).length).length;
@@ -316,27 +312,26 @@ function render(data) {
     sectionHTML("🥋 My Dojo", "— techniques taught to me in person", dojoMoves, "dojo") +
     sectionHTML("Gracie Combatives", "", otherMoves, "combatives");
 
-  applyProgress();
+  applyWatch();
   applyRatings();
   applyFilters();
 }
 
-function applyProgress() {
-  const p = getProgress();
-  let done = 0, started = 0;
+function applyWatch() {
+  const w = getWatch();
+  let watched = 0;
   document.querySelectorAll(".move-card").forEach((card) => {
-    const st = p[card.dataset.id] || "none";
-    card.classList.remove("status-none", "status-started", "status-done");
-    card.classList.add("status-" + st);
+    const n = w[card.dataset.id] || 0;
+    card.classList.toggle("watched", n > 0);
+    const badge = card.querySelector(".watch-badge");
+    if (badge) badge.innerHTML = n > 0 ? `✓ <b>${n}</b>` : "○";
     const dot = card.querySelector(".status-dot");
-    if (dot) dot.title = STATES[st].label;
-    const btn = card.querySelector(".btn-status");
-    if (btn) btn.textContent = STATES[st].short;
-    if (st === "done") done++; else if (st === "started") started++;
+    if (dot) dot.title = n > 0 ? `Watched ${n}×` : "Not watched";
+    if (n > 0) watched++;
   });
   const total = document.querySelectorAll(".move-card").length;
   const stat = document.getElementById("progress-stat");
-  if (stat) stat.textContent = `${done} done · ${started} started / ${total}`;
+  if (stat) stat.textContent = `${watched} watched / ${total}`;
 }
 
 // ---- Filtering ----
@@ -395,13 +390,10 @@ document.getElementById("filters").addEventListener("click", (e) => {
 document.getElementById("sections").addEventListener("click", (e) => {
   const btn = e.target.closest("[data-act]");
   if (!btn) return;
-  const id = btn.dataset.id;
-  if (btn.dataset.act === "status") {
-    setState(id, CYCLE[stateOf(id)]);
-  } else if (btn.dataset.act === "watch") {
+  if (btn.dataset.act === "watch") {
     openVideo(btn);
   } else if (btn.dataset.act === "rate") {
-    rateClick(id, parseInt(btn.dataset.star, 10));
+    rateClick(btn.dataset.id, parseInt(btn.dataset.star, 10));
   }
 });
 // Star clicks inside the player modal.
@@ -419,8 +411,9 @@ function openVideo(btn) {
   const moveId = btn.dataset.move;
   currentMoveId = moveId;
   const card = document.querySelector(`.move-card[data-id="${CSS.escape(moveId)}"]`);
+  // autoplay + loop: replays automatically until the user closes the player.
   document.getElementById("player-iframe").src =
-    `https://www.youtube-nocookie.com/embed/${yt}?rel=0&autoplay=1&modestbranding=1`;
+    `https://www.youtube-nocookie.com/embed/${yt}?rel=0&autoplay=1&modestbranding=1&loop=1&playlist=${yt}`;
   document.getElementById("player-title").textContent =
     card ? card.querySelector(".move-name").textContent : "";
   document.getElementById("player-sub").textContent =
@@ -432,8 +425,6 @@ function openVideo(btn) {
   ps.innerHTML = starButtons(yt);
   applyRatings();
   document.getElementById("player").classList.remove("hidden");
-  // Opening a video implies you've at least started the move.
-  if (moveId && stateOf(moveId) === "none") setState(moveId, "started");
 }
 
 function closeVideo() {
@@ -442,7 +433,8 @@ function closeVideo() {
   currentMoveId = null;
 }
 function closeVideoBackdrop(e) { if (e.target.id === "player") closeVideo(); }
-function setFromPlayer(state) { if (currentMoveId) setState(currentMoveId, state); }
+// The "Close (mark watched)" button: count one watch, then close.
+function closeWatched() { if (currentMoveId) bumpWatch(currentMoveId); closeVideo(); }
 document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeVideo(); });
 
 // ---- Hide outbound YouTube links on iPhone/iPad (kept on Mac/desktop) ----
