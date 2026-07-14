@@ -5,7 +5,7 @@ _Updated 2026-06-11 · Jitz · local (Mac)_
 this, then `CLAUDE.md`.
 
 ## Where things stand
-- Version **1.4.0**; service-worker cache **jitz-v17**. Version source:
+- Version **1.5.0**; service-worker cache **jitz-v19**. Version source:
   `static/js/version.js` (`window.APP_VERSION`); cache const is `VERSION` in `sw.js`.
 - **Update button was fixed in 1.3.1**: it now unregisters the SW, clears caches, and
   `fetch(..., {cache:"reload"})`-refreshes version.js/app.js/style.css/etc. before reloading —
@@ -46,18 +46,19 @@ this, then `CLAUDE.md`.
 - None blocking.
 
 ## Next steps
-- **In progress — Combatives 2nd video options**: a research workflow gathered lineage-first
-  candidate videos for all 46 moves (saved at
-  `scratchpad/candidates.json` this session; also in the workflow journal). The **dojo** moves are
-  done (2 options each where a verified clip existed). The **~30 Combatives** candidates still need
-  the same treatment: each must be **verified in the browser** (load the youtube-nocookie embed →
-  confirm it plays AND is the right technique — titles mislead) before adding to `moves.json`
-  `videos[]`. Drop agent dupes (some returned a video the app already has) and wrong-technique hits.
-- **Only 1 card still has no video**: `double-underhook-pass`. Candidates gathered (e.g. Chewjitsu
-  `OK8VEPdxzMM`) but not yet embed-verified.
-- **Verify at deploy** the newer ids still embed: `IUviW1Ejp2w`, `xEBzXXG4IKM`, `a5qrg3MbEl4`,
-  `7YNC9vh2WQ4`, plus the dojo 2nd-options added in 1.4.0.
-- Content: keep adding per-move options via the ratings-export curation loop.
+- **DONE — video coverage complete (1.5.0)**: all **48 moves have a verified, embeddable video**,
+  and **36 have 2–3 instructor options** on one card. Every added clip was verified in-browser
+  (embeddable + correct technique) — the Combatives batch was checked with a YouTube IFrame-API
+  probe (getVideoData title + onError), driven manually because the preview tab throttles background
+  timers. `double-underhook-pass` (was empty) now has Chewjitsu + Submissions101.
+- A few moves intentionally stay single-video (no distinct verified 2nd option found): `dojo-gangorra`,
+  `dojo-club-defense-overhead`, `dojo-back-takedown-after-punch`, `dojo-headlock-defense-wide-stance`,
+  `dojo-gun-defense-waistband`, `clinch-aggressive`, `elevator-sweep`, `body-fold-takedown`,
+  `haymaker-punch-defense`. Fine to enrich later via the ratings-export loop.
+- **Occasionally re-verify** third-party embeds still play (owners can disable embedding): the
+  non-Gracie-channel adds (Sportvision Eindhoven, Roy Dean, Lane Andrews, Andre Galvao, Chewjitsu,
+  Submissions101) are the most likely to change.
+- Candidate research is saved at `scratchpad/candidates.json` + the workflow journal.
 - If About copy changes, regenerate `jitz-about.pdf` (headless Chrome `--print-to-pdf` of
   `about.html`, served from the jitz/ folder).
 
