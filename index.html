@@ -40,13 +40,12 @@
       <p class="muted" id="intro-progress"></p>
     </div>
 
-    <div id="sources-panel" class="sources-panel hidden">
-      <div class="sources-title">★ Sources you rate highest</div>
-      <div class="sources-list" id="sources-list"></div>
-      <div class="sources-foot">Rate the videos you watch (1–5 stars) to build this list.</div>
-    </div>
-
     <div class="controls">
+      <div class="segmented" id="group-filter">
+        <button class="seg active" data-group="all">All</button>
+        <button class="seg" data-group="dojo">🥋 My Dojo</button>
+        <button class="seg" data-group="combatives">Combatives</button>
+      </div>
       <input type="search" id="search" class="search" placeholder="Search moves…" autocomplete="off">
       <div class="filters" id="filters">
         <button class="chip active" data-cat="all">All</button>
@@ -57,6 +56,13 @@
 
     <div id="sections"></div>
     <div id="no-results" class="no-results hidden">No moves match.</div>
+
+    <div id="sources-panel" class="sources-panel hidden">
+      <div class="sources-title">★ Sources you rate highest</div>
+      <div class="sources-list" id="sources-list"></div>
+      <button id="export-ratings" class="btn btn-search export-btn">📤&nbsp; Send my ratings to Claude</button>
+      <div class="sources-foot">Rate the videos you watch (1–5 stars) to build this list — then send it to Claude to get more videos from your top instructors.</div>
+    </div>
 
     <p class="muted foot-note">
       Progress is saved on this device only (no account, no server).

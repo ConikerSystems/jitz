@@ -3,7 +3,8 @@
 
 const PROGRESS_KEY = "jitz.progress";   // { id: "started" | "done" }
 const OLD_WATCHED_KEY = "jitz.watched"; // legacy Set of ids -> migrated to "done"
-const RATINGS_KEY = "jitz.ratings";     // { id: 1..5 } per-video star rating
+const RATINGS_KEY = "jitz.ratings";       // { videoId: 1..5 } per-VIDEO star rating
+const RATINGS_MIGRATED_KEY = "jitz.ratings.v2"; // marker: move-id -> video-id remap done
 
 const STATES = {
   none:    { label: "Not started", short: "○ Not started" },
@@ -39,7 +40,15 @@ function setState(id, state) {
   applyProgress();
 }
 
-// ---- Ratings (per-video, 1-5 stars; powers the "top sources" insights) ----
+// A move can carry several videos (multiple instructor options on one card).
+// Normalize both shapes: the new `videos` array, or the legacy single-video fields.
+function videosOf(m) {
+  if (Array.isArray(m.videos) && m.videos.length) return m.videos;
+  if (m.youtube) return [{ youtube: m.youtube, video_title: m.video_title, video_author: m.video_author }];
+  return [];
+}
+
+// ---- Ratings (per-VIDEO now, 1-5 stars; keyed by YouTube id; power "top sources") ----
 function getRatings() {
   try { return JSON.parse(localStorage.getItem(RATINGS_KEY) || "{}"); }
   catch (e) { return {}; }
@@ -54,6 +63,29 @@ function setRating(id, n) {
 }
 // Clicking the current rating again clears it.
 function rateClick(id, star) { setRating(id, star === ratingOf(id) ? 0 : star); }
+
+// One-time migration: ratings used to be keyed by MOVE id. Re-key each to the
+// move's (single) VIDEO id so the new per-video model keeps existing stars.
+// Runs once MOVES is loaded; idempotent via the marker key.
+function migrateRatings() {
+  if (localStorage.getItem(RATINGS_MIGRATED_KEY)) return;
+  const r = getRatings();
+  const byId = {};
+  MOVES.forEach((m) => { byId[m.id] = m; });
+  const out = {};
+  Object.entries(r).forEach(([key, stars]) => {
+    const m = byId[key];
+    if (m) {
+      const vids = videosOf(m);          // legacy moves had exactly one video
+      if (vids.length === 1) out[vids[0].youtube] = stars;
+      // ambiguous multi-video legacy shouldn't exist — drop if so
+    } else {
+      out[key] = stars;                   // already a video id (or unknown) — keep
+    }
+  });
+  saveRatings(out);
+  localStorage.setItem(RATINGS_MIGRATED_KEY, "1");
+}
 
 function starButtons(id) {
   let s = "";
@@ -80,12 +112,14 @@ function buildSourcesPanel() {
   const r = getRatings();
   const byAuthor = {};
   MOVES.forEach((m) => {
-    if (m.youtube && r[m.id]) {
-      const a = m.video_author || "Unknown";
-      const e = (byAuthor[a] = byAuthor[a] || { sum: 0, count: 0 });
-      e.sum += r[m.id];
-      e.count += 1;
-    }
+    videosOf(m).forEach((v) => {
+      if (v.youtube && r[v.youtube]) {
+        const a = v.video_author || "Unknown";
+        const e = (byAuthor[a] = byAuthor[a] || { sum: 0, count: 0 });
+        e.sum += r[v.youtube];
+        e.count += 1;
+      }
+    });
   });
   const rows = Object.entries(byAuthor)
     .map(([author, v]) => ({ author, avg: v.sum / v.count, count: v.count }))
@@ -105,6 +139,65 @@ function buildSourcesPanel() {
   }).join("");
 }
 
+// Small toast (reuses feedback.js's globally-injected .fb-toast style).
+function toast(msg) {
+  const t = document.createElement("div");
+  t.className = "fb-toast"; t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 1900);
+}
+
+// Build a paste-into-Claude export: ranked instructors + rated videos + a
+// machine-readable block so a Mac session can curate more videos from them.
+function buildRatingsExport() {
+  const r = getRatings();
+  const byAuthor = {};
+  const videos = [];
+  MOVES.forEach((m) => {
+    videosOf(m).forEach((v) => {
+      if (v.youtube && r[v.youtube]) {
+        const a = v.video_author || "Unknown";
+        const e = (byAuthor[a] = byAuthor[a] || { sum: 0, count: 0 });
+        e.sum += r[v.youtube]; e.count += 1;
+        videos.push({ id: v.youtube, move: m.id, name: m.name, author: a, stars: r[v.youtube] });
+      }
+    });
+  });
+  const instructors = Object.entries(byAuthor)
+    .map(([author, v]) => ({ author, avg: +(v.sum / v.count).toFixed(2), count: v.count }))
+    .sort((x, y) => y.avg - x.avg || y.count - x.count);
+  const date = new Date().toISOString().slice(0, 10);
+  const version = window.APP_VERSION || "?";
+  const lines = [`JITZ RATINGS EXPORT · v${version} · ${date}`, ""];
+  if (!instructors.length) {
+    lines.push("(No ratings yet — rate some videos first.)");
+    return lines.join("\n");
+  }
+  lines.push("Top instructors (by your stars):");
+  instructors.forEach((it, i) => lines.push(`${i + 1}. ${it.author} — ${it.avg.toFixed(1)} avg · ${it.count} rated`));
+  lines.push("", "Rated videos:");
+  videos.slice().sort((a, b) => b.stars - a.stars).forEach((vd) => {
+    const s = "★★★★★".slice(0, vd.stars) + "☆☆☆☆☆".slice(0, 5 - vd.stars);
+    lines.push(`${s} ${vd.name} — ${vd.author} (${vd.id})`);
+  });
+  lines.push("", "Claude: parse the block below and add more embeddable videos from these instructors.");
+  lines.push("===JITZ-EXPORT-JSON===");
+  lines.push(JSON.stringify({ app: "jitz", version, date, instructors, videos }));
+  lines.push("===END===");
+  return lines.join("\n");
+}
+
+function exportRatings() {
+  const payload = buildRatingsExport();
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(payload)
+      .then(() => toast("Ratings copied — paste them to Claude"))
+      .catch(() => window.prompt("Copy your ratings, then paste them to Claude:", payload));
+  } else {
+    window.prompt("Copy your ratings, then paste them to Claude:", payload);
+  }
+}
+
 // ---- Render ----
 let MOVES = [];
 
@@ -114,25 +207,50 @@ function esc(s) {
     .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
 
+// A Watch button for one instructor's video (label by author when there are several).
+function watchBtnHTML(m, v, labelAuthor) {
+  const label = labelAuthor ? `▶ ${esc(v.video_author || "Watch")}` : "▶ Watch";
+  return `<button class="btn btn-watch" data-act="watch" data-move="${esc(m.id)}" ` +
+         `data-yt="${esc(v.youtube)}" data-vtitle="${esc(v.video_title)}" data-vauthor="${esc(v.video_author)}">${label}</button>`;
+}
+function starRowHTML(v) {
+  return `<div class="stars" data-rate-id="${esc(v.youtube)}">${starButtons(v.youtube)}</div>`;
+}
+
 function cardHTML(m) {
-  const hasVideo = !!m.youtube;
+  const vids = videosOf(m);
+  const hasVideo = vids.length > 0;
   const catClass = "cat-" + String(m.category).toLowerCase();
   const lesson = m.lesson ? ` · Lesson ${m.lesson}` : "";
-  const dataVideo = hasVideo
-    ? ` data-yt="${esc(m.youtube)}" data-vtitle="${esc(m.video_title)}" data-vauthor="${esc(m.video_author)}"`
-    : "";
+  const tags = Array.isArray(m.tags) ? m.tags : [];
   const searchHref = "https://www.youtube.com/results?search_query=" +
     encodeURIComponent(`Gracie Jiu-Jitsu ${m.name} ${m.position}`);
-  const action = hasVideo
-    ? `<button class="btn btn-watch" data-act="watch" data-id="${esc(m.id)}">▶ Watch</button>`
-    : `<a class="btn btn-search yt-out" target="_blank" href="${esc(searchHref)}">Find on YouTube ↗</a>`;
+
+  // Action row = primary control next to the status button. One video → a single
+  // Watch button (+ stars below). Several videos → status only, with a stacked
+  // list of Watch+stars options below. No video → Find-on-YouTube link.
+  let action, optionsBlock = "";
+  if (!hasVideo) {
+    action = `<a class="btn btn-search yt-out" target="_blank" href="${esc(searchHref)}">Find on YouTube ↗</a>`;
+  } else if (vids.length === 1) {
+    action = watchBtnHTML(m, vids[0], false);
+    optionsBlock = starRowHTML(vids[0]);
+  } else {
+    action = "";
+    optionsBlock = `<div class="video-options">` +
+      vids.map((v) => `<div class="vopt">${watchBtnHTML(m, v, true)}${starRowHTML(v)}</div>`).join("") +
+      `</div>`;
+  }
+
   return `
   <div class="move-card${hasVideo ? "" : " no-video"}${m.dojo ? " is-dojo" : ""}"
        data-id="${esc(m.id)}"
        data-name="${esc(String(m.name).toLowerCase())}"
        data-pos="${esc(String(m.position).toLowerCase())}"
        data-cat="${esc(m.category)}"
-       data-video="${hasVideo ? "1" : "0"}"${dataVideo}>
+       data-tags="${esc(tags.join(","))}"
+       data-dojo="${m.dojo ? "1" : "0"}"
+       data-video="${hasVideo ? "1" : "0"}">
     <div class="move-top">
       <span class="move-order">${esc(m.order)}</span>
       <span class="cat-badge ${catClass}">${esc(m.category)}</span>
@@ -145,15 +263,16 @@ function cardHTML(m) {
       ${action}
       <button class="btn btn-status" data-act="status" data-id="${esc(m.id)}"></button>
     </div>
-    ${hasVideo ? `<div class="stars" data-rate-id="${esc(m.id)}">${starButtons(m.id)}</div>` : ""}
+    ${optionsBlock}
   </div>`;
 }
 
 function render(data) {
   MOVES = data.moves;
+  migrateRatings();               // move-id -> video-id ratings remap (once)
   const meta = data.meta || {};
   const total = MOVES.length;
-  const withVideo = MOVES.filter((m) => m.youtube).length;
+  const withVideo = MOVES.filter((m) => videosOf(m).length).length;
 
   // Header / intro / dojo
   document.getElementById("intro-source").textContent = meta.source || "";
@@ -172,7 +291,9 @@ function render(data) {
   }
 
   // Category chips
-  const cats = [...new Set(MOVES.map((m) => m.category))].sort();
+  const cats = [...new Set(
+    MOVES.flatMap((m) => [m.category, ...(Array.isArray(m.tags) ? m.tags : [])])
+  )].sort();
   const filters = document.getElementById("filters");
   const toggle = document.getElementById("video-only");
   cats.forEach((c) => {
@@ -220,17 +341,20 @@ function applyProgress() {
 
 // ---- Filtering ----
 let activeCat = "all";
+let activeGroup = "all";
 let videoOnly = false;
 
 function applyFilters() {
   const q = (document.getElementById("search").value || "").trim().toLowerCase();
   let visible = 0;
   document.querySelectorAll(".move-card").forEach((card) => {
+    const tags = (card.dataset.tags || "").split(",").filter(Boolean);
     const hay = `${card.dataset.name} ${card.dataset.pos} ${card.dataset.cat.toLowerCase()}`;
     const matchText = !q || hay.includes(q);
-    const matchCat = activeCat === "all" || card.dataset.cat === activeCat;
+    const matchCat = activeCat === "all" || card.dataset.cat === activeCat || tags.includes(activeCat);
+    const matchGroup = activeGroup === "all" || (activeGroup === "dojo") === (card.dataset.dojo === "1");
     const matchVideo = !videoOnly || card.dataset.video === "1";
-    const show = matchText && matchCat && matchVideo;
+    const show = matchText && matchCat && matchGroup && matchVideo;
     card.classList.toggle("hidden", !show);
     if (show) visible++;
   });
@@ -243,6 +367,18 @@ function applyFilters() {
 
 // ---- Events (delegation) ----
 document.getElementById("search").addEventListener("input", applyFilters);
+// Group segmented control: All / My Dojo / Combatives (an independent filter dimension).
+const groupFilter = document.getElementById("group-filter");
+if (groupFilter) groupFilter.addEventListener("click", (e) => {
+  const seg = e.target.closest(".seg");
+  if (!seg) return;
+  activeGroup = seg.dataset.group;
+  groupFilter.querySelectorAll(".seg").forEach((s) => s.classList.toggle("active", s === seg));
+  applyFilters();
+});
+// Export ratings for Claude curation (button lives in #sources-panel).
+const exportBtn = document.getElementById("export-ratings");
+if (exportBtn) exportBtn.addEventListener("click", exportRatings);
 document.getElementById("filters").addEventListener("click", (e) => {
   const btn = e.target.closest(".chip");
   if (!btn) return;
@@ -263,7 +399,7 @@ document.getElementById("sections").addEventListener("click", (e) => {
   if (btn.dataset.act === "status") {
     setState(id, CYCLE[stateOf(id)]);
   } else if (btn.dataset.act === "watch") {
-    openVideo(id);
+    openVideo(btn);
   } else if (btn.dataset.act === "rate") {
     rateClick(id, parseInt(btn.dataset.star, 10));
   }
@@ -277,24 +413,27 @@ document.getElementById("player").addEventListener("click", (e) => {
 // ---- Player ----
 let currentMoveId = null;
 
-function openVideo(id) {
-  const card = document.querySelector(`.move-card[data-id="${CSS.escape(id)}"]`);
-  if (!card || !card.dataset.yt) return;
-  currentMoveId = id;
+function openVideo(btn) {
+  const yt = btn.dataset.yt;
+  if (!yt) return;
+  const moveId = btn.dataset.move;
+  currentMoveId = moveId;
+  const card = document.querySelector(`.move-card[data-id="${CSS.escape(moveId)}"]`);
   document.getElementById("player-iframe").src =
-    `https://www.youtube-nocookie.com/embed/${card.dataset.yt}?rel=0&autoplay=1&modestbranding=1`;
-  document.getElementById("player-title").textContent = card.querySelector(".move-name").textContent;
+    `https://www.youtube-nocookie.com/embed/${yt}?rel=0&autoplay=1&modestbranding=1`;
+  document.getElementById("player-title").textContent =
+    card ? card.querySelector(".move-name").textContent : "";
   document.getElementById("player-sub").textContent =
-    `${card.dataset.vtitle} — ${card.dataset.vauthor}`;
-  document.getElementById("player-yt").href = `https://www.youtube.com/watch?v=${card.dataset.yt}`;
-  // Star rating row for this video.
+    `${btn.dataset.vtitle} — ${btn.dataset.vauthor}`;
+  document.getElementById("player-yt").href = `https://www.youtube.com/watch?v=${yt}`;
+  // Star rating row for THIS video (keyed by its YouTube id).
   const ps = document.getElementById("player-stars");
-  ps.dataset.rateId = id;
-  ps.innerHTML = starButtons(id);
+  ps.dataset.rateId = yt;
+  ps.innerHTML = starButtons(yt);
   applyRatings();
   document.getElementById("player").classList.remove("hidden");
-  // Opening a video implies you've at least started it.
-  if (stateOf(id) === "none") setState(id, "started");
+  // Opening a video implies you've at least started the move.
+  if (moveId && stateOf(moveId) === "none") setState(moveId, "started");
 }
 
 function closeVideo() {
