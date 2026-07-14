@@ -465,13 +465,24 @@ function updateApp(btn) {
   if (btn) btn.textContent = "🔄  Updating…";
   (async () => {
     try {
+      // 1) Remove the service worker entirely so it can't serve an old shell.
       if ("serviceWorker" in navigator) {
         const regs = await navigator.serviceWorker.getRegistrations();
-        await Promise.all(regs.map((r) => r.update().catch(() => {})));
+        await Promise.all(regs.map((r) => r.unregister().catch(() => {})));
       }
+      // 2) Clear all service-worker caches.
       if (window.caches) { const ks = await caches.keys(); await Promise.all(ks.map((k) => caches.delete(k))); }
+      // 3) Force the browser HTTP cache to refetch the core files from the network.
+      //    iOS holds these ~10 min (GitHub Pages max-age=600), so without this the
+      //    reloaded page would re-load a stale version.js / app.js and appear "not updated".
+      await Promise.all(
+        ["static/js/version.js", "static/js/app.js", "static/css/style.css",
+         "static/js/feedback.js", "moves.json", "about.html"]
+          .map((u) => fetch(u, { cache: "reload" }).catch(() => {}))
+      );
     } catch (e) { /* ignore */ }
-    location.href = "index.html?u=" + Date.now(); // cache-busted reload
+    // 4) Hard reload from a cache-busted entry point (SW re-registers on load).
+    location.replace("index.html?u=" + Date.now());
   })();
 }
 
