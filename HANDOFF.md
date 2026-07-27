@@ -62,6 +62,25 @@ this, then `CLAUDE.md`.
 - If About copy changes, regenerate `jitz-about.pdf` (headless Chrome `--print-to-pdf` of
   `about.html`, served from the jitz/ folder).
 
+## Considered but shelved
+- **"Describe your position" finder** (idea from Joe, shelved 2026-07-27): a dedicated
+  panel where you dictate/type a real situation ("opponent grips my right collar with his
+  left hand, I trap his elbow to my chest") and get back the moves that apply, ranked, so
+  you can see how to react. **Shelved because the per-move metadata is too thin to match a
+  sentence against** — today a move carries only terse `name` + `position` + `category`
+  (e.g. "Straight Armlock" / "Mount (top)" / "Submission"), and search is exact substring
+  match on those three fields, so a plain-English description matches nothing.
+- **Feasible path if revisited** (fully offline, keeps Jitz free/no-server/no-account):
+  first do the content work — enrich each of the 48 moves in `moves.json` with new fields
+  (scenario / opponent's action / grips / synonyms / aliases); then add the panel plus an
+  **on-device weighted keyword + synonym matcher** that tokenizes the description and ranks
+  moves by overlap. "True AI comprehension" (send text to an LLM) was rejected: it needs a
+  backend + API key + per-use cost and breaks the offline model. The whole feature's quality
+  is a function of that per-move content, so it's real authoring work, not just code.
+- **Hook points for a future build:** card `data-*` attributes in `cardHTML`
+  (`static/js/app.js` ~216–263) and the single `applyFilters()` engine (~342–361) — a new
+  matcher would extend those rather than replace them.
+
 ## How to run / test
 - Serve locally from `jitz/`: `python3 -m http.server 8811 --directory .` → open
   `http://localhost:8811/`. (Videos are cross-origin YouTube and need the network; the shell
