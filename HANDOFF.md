@@ -1,11 +1,11 @@
 # HANDOFF — resume notes for the next session
-_Updated 2026-06-11 · Jitz · local (Mac)_
+_Updated 2026-09-15 · Jitz_
 
 **Start here:** check git sync (Claude does all git — sync at start, push at end), then read
 this, then `CLAUDE.md`.
 
 ## Where things stand
-- Version **1.5.0**; service-worker cache **jitz-v19**. Version source:
+- Version **1.5.1**; service-worker cache **jitz-v20**. Version source:
   `static/js/version.js` (`window.APP_VERSION`); cache const is `VERSION` in `sw.js`.
 - **Update button was fixed in 1.3.1**: it now unregisters the SW, clears caches, and
   `fetch(..., {cache:"reload"})`-refreshes version.js/app.js/style.css/etc. before reloading —
@@ -33,6 +33,14 @@ this, then `CLAUDE.md`.
   normalizes both.
 
 ## What we did (recent sessions)
+- **1.5.1 (2026-09-15) — Update button + SW brought to the Hub standard** (ported from Axis):
+  `updateApp()` first fetches `static/js/version.js?u=…` with `cache:"no-store"` and shows
+  "✅ UP TO DATE — vX" or "UPDATING TO vY…"; only when newer does it unregister the SW, clear
+  caches, refetch core files and `location.replace`. `sw.js` fetch handler now uses
+  `fetch(req, {cache:"no-store"})` and the precache uses `new Request(u, {cache:"reload"})`
+  (a plain `fetch(req)` can re-save a stale HTTP-cached file into the SW cache); maskable icons
+  added to SHELL. `.gitignore` gained the Hub sensitive-files block. Verified in a local
+  browser (no-store dev server); not yet checked on a real iPad.
 - Adopted the Simpli Piano **web-app standard**: `static/js/version.js`; footer with auto-year +
   version (rendered by `initFooter()` in `static/js/app.js`); in-app **🔄 Update** button
   (`updateApp()`); a Share / Feedback / Update / About button row; feedback email →

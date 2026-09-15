@@ -458,12 +458,28 @@ if (isAppleTouch) document.body.classList.add("hide-yt");
 
 // ---- Update button: force-pull the latest version ----
 // iOS often resumes an installed (Home-Screen) app from memory instead of
-// reloading, so it never sees a new release. This updates the service worker,
+// reloading, so it never sees a new release. This checks the live version first
+// (bypassing every cache) and reports it; if newer, it removes the service worker,
 // clears caches, and does a cache-busted reload. Needs the network.
 function updateApp(btn) {
   if (!navigator.onLine) { alert("Connect to Wi-Fi or cellular, then tap Update again."); return; }
-  if (btn) btn.textContent = "🔄  Updating…";
-  (async () => {
+  const label = btn ? btn.textContent : "";
+  const say = (t) => { if (btn) btn.textContent = t; };
+  say("🔄  Checking…");
+  return (async () => {
+    // 0) What version is live? Report it instead of reloading blindly.
+    let remote = null;
+    try {
+      const txt = await fetch("static/js/version.js?u=" + Date.now(), { cache: "no-store" })
+        .then((r) => r.text());
+      remote = (txt.match(/APP_VERSION\s*=\s*"([^"]+)"/) || [])[1] || null;
+    } catch (e) { /* ignore */ }
+    if (remote && remote === window.APP_VERSION) {
+      say("✅ UP TO DATE — v" + remote);
+      setTimeout(() => say(label), 3000);
+      return;
+    }
+    say(remote ? "UPDATING TO v" + remote + "…" : "UPDATING…");
     try {
       // 1) Remove the service worker entirely so it can't serve an old shell.
       if ("serviceWorker" in navigator) {
