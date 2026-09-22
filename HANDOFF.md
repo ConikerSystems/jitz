@@ -1,11 +1,11 @@
 # HANDOFF — resume notes for the next session
-_Updated 2026-09-15 · Jitz_
+_Updated 2026-09-21 · Jitz_
 
 **Start here:** check git sync (Claude does all git — sync at start, push at end), then read
 this, then `CLAUDE.md`.
 
 ## Where things stand
-- Version **1.5.1**; service-worker cache **jitz-v20**. Version source:
+- Version **1.5.3**; service-worker cache **jitz-v22**. Version source:
   `static/js/version.js` (`window.APP_VERSION`); cache const is `VERSION` in `sw.js`.
 - **Update button was fixed in 1.3.1**: it now unregisters the SW, clears caches, and
   `fetch(..., {cache:"reload"})`-refreshes version.js/app.js/style.css/etc. before reloading —
@@ -33,6 +33,23 @@ this, then `CLAUDE.md`.
   normalizes both.
 
 ## What we did (recent sessions)
+- **1.5.2 + 1.5.3 (2026-09-21) — My Dojo additions from Joe's 2026-09-21 class** (commits
+  `623b580`, `fec771e`). Joe sent his dojo notes (Royce Gracie Jiu Jitsu, "260921"); checked every
+  item against `moves.json`. Everything was already present except two, now added as dojo cards:
+  **13 `dojo-double-collar-grab-hands-apart`** (Grayson Greener BJJ, Helio Gracie SD #14,
+  `QKJWZNcRYf4`) and **14 `dojo-front-choke-hip-throw`** (Grayson Greener BJJ, Helio Gracie SD #3,
+  `blWuKYgGkH4`). Both verified playing in the in-app player (screenshots). Also added
+  **15 `dojo-keeping-mount`** — Joe wanted "Keeping the mount position" under My Dojo too. It is a
+  *separate* dojo card reusing the two videos of Combatives Lesson 3 `positional-control-mount`,
+  which stays put **so the Combatives section keeps all 36 techniques**. Trade-off: watch counts
+  are per move id (the two cards count separately); star ratings are per video, so they're shared.
+  Joe's note "gun defense – front wristband" = existing `dojo-gun-defense-waistband` (typo).
+  Live site confirmed serving v1.5.3. Dojo list is now 15 cards; app total 51 moves.
+- **Adding a dojo move (recipe):** append a line after the last `dojo-*` entry in `moves.json`
+  with the next `order`, `"dojo": true`, `"lesson": null` (or the class number); Helio Gracie
+  Self Defense series by Grayson Greener BJJ is a good first source (`youtube.com/oembed` confirms
+  title/channel; then open the card in the app to confirm it plays — the IFrame-API probe times
+  out in the preview tab). Bump `version.js` + `sw.js` together.
 - **1.5.1 (2026-09-15) — Update button + SW brought to the Hub standard** (ported from Axis):
   `updateApp()` first fetches `static/js/version.js?u=…` with `cache:"no-store"` and shows
   "✅ UP TO DATE — vX" or "UPDATING TO vY…"; only when newer does it unregister the SW, clear
@@ -54,6 +71,8 @@ this, then `CLAUDE.md`.
 - None blocking.
 
 ## Next steps
+- Joe said he may send more dojo lists — check each item against `moves.json` (dojo + Combatives), add the missing ones as dojo cards.
+- Still untested on a real iPad: the 1.5.1 Update button (should read "✅ UP TO DATE — v1.5.3").
 - **DONE — video coverage complete (1.5.0)**: all **48 moves have a verified, embeddable video**,
   and **36 have 2–3 instructor options** on one card. Every added clip was verified in-browser
   (embeddable + correct technique) — the Combatives batch was checked with a YouTube IFrame-API
