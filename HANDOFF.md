@@ -71,7 +71,7 @@ this, then `CLAUDE.md`.
 - None blocking.
 
 ## Next steps
-- Joe said he may send more dojo lists — check each item against `moves.json` (dojo + Combatives), add the missing ones as dojo cards.
+- Joe's full dojo list (sent 2026-09-21) is done — every item is in the app. For future class notes, follow the recipe under "What we did".
 - Still untested on a real iPad: the 1.5.1 Update button (should read "✅ UP TO DATE — v1.5.3").
 - **DONE — video coverage complete (1.5.0)**: all **48 moves have a verified, embeddable video**,
   and **36 have 2–3 instructor options** on one card. Every added clip was verified in-browser
